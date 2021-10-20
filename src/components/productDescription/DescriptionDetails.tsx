@@ -1,4 +1,4 @@
-import React, { Component, SyntheticEvent } from "react";
+import { Component } from "react";
 import {
   DescriptionDetailsProps,
   DescriptionDetailsState,
@@ -41,10 +41,10 @@ export default class DescriptionDetails extends Component<
       name,
       description,
       isProductLoading,
-      category,
+      handleAddProductToCart,
+      id,
+      gallery,
     } = this.props;
-
-    console.log(this.state.selected);
 
     return (
       <DescriptionDetailsWrapper>
@@ -114,7 +114,24 @@ export default class DescriptionDetails extends Component<
                 ).amount
               }
             </PriceAmount>
-            <AddToCart inStock={inStock}>add to cart</AddToCart>
+            <AddToCart
+              onClick={() => {
+                const brandToAdd = {
+                  id,
+                  prices,
+                  attributes: this.state.selected,
+                  brand,
+                  name,
+                  gallery,
+                  itemCount: 1,
+                };
+                handleAddProductToCart(brandToAdd, id);
+                // window.localStorage.removeItem("cart");
+              }}
+              inStock={inStock}
+            >
+              add to cart
+            </AddToCart>
             <Description dangerouslySetInnerHTML={{ __html: description }} />
           </>
         )}

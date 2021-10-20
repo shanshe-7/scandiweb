@@ -1,11 +1,13 @@
 import styled, { css } from "styled-components";
 
-export const ProductDescriptionWrapper = styled.div`
+export const ProductDescriptionWrapper = styled.div<any>`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 72px;
-  margin-top: 72px;
+  padding-bottom: 72px;
+  padding-top: 72px;
+  ${({ isMiniCartOpen }) =>
+    isMiniCartOpen && `background: rgba(57, 55, 72, 0.22)`}
 `;
 
 export const ProductDescriptionContent = styled.div<any>`

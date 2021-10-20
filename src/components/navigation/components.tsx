@@ -1,4 +1,4 @@
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 
 export const NavigationWrapper = styled.div`
   width: 100%;
@@ -60,7 +60,6 @@ export const CurrencyAndCartWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  /* width: auto; */
   position: relative;
 `;
 
@@ -122,13 +121,14 @@ export const CurrencyDropDownText = styled.div<any>`
   }
 `;
 
-export const CartIconAndItemsCountWrapper = styled.div`
+export const CartIconAndItemsCountWrapper = styled.div<any>`
   position: relative;
   margin-left: 22px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  ${({ notOpen }) => notOpen && "pointer-events: none"}
 `;
 
 export const CartIconItemsCount = styled.div`
@@ -145,4 +145,62 @@ export const CartIconItemsCount = styled.div`
   justify-content: center;
   left: 10px;
   bottom: 10px;
+`;
+
+export const MiniCartItemsWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 325px;
+  position: absolute;
+  top: 48px;
+  right: 0px;
+  z-index: 10;
+  cursor: initial;
+  background: #fff;
+`;
+
+export const MiniCartItemsHeaderWrapper = styled.div`
+  margin-top: 8px;
+  width: calc(100% - 32px);
+`;
+export const MiniCartItemsHeaderBold = styled.span`
+  font-size: 16px;
+  font-family: Ral-b;
+  width: auto;
+`;
+
+export const MiniCartItemsHeadedRegular = styled.span`
+  font-size: 16px;
+  font-family: Ral-r;
+`;
+
+export const ViewBag = styled.button<any>`
+  font-family: Ral-b;
+  font-size: 14px;
+  color: #1d1f22;
+  width: calc((100% / 2) - 12px);
+  height: 100%;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  text-transform: uppercase;
+  border: none;
+  outline: none;
+  border: 1px solid #1d1f22;
+  border-radius: 3px;
+  height: 100%;
+`;
+
+export const ViewBagAndProceedToCheckoutWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 35px;
+  height: 43px;
+  width: calc(100% - 32px);
+  margin-bottom: 20px;
 `;

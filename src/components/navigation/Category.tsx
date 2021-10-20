@@ -1,11 +1,6 @@
 import { Component } from "react";
 import { CategoriesWrapper, CategoryWrapper, CategoryText } from "./components";
-import {
-  Switch,
-  Route,
-  withRouter,
-  RouteComponentProps,
-} from "react-router-dom";
+import { withRouter, RouteComponentProps } from "react-router-dom";
 
 interface CategoryProps {
   isLoading: boolean;
@@ -26,10 +21,10 @@ class Category extends Component<CategoryProps & RouteComponentProps> {
           <CategoryWrapper>
             <CategoryText
               onClick={() => {
-                this.props.history.goBack();
+                this.props.history.push("/");
               }}
             >
-              go back
+              home
             </CategoryText>
           </CategoryWrapper>
         ) : (

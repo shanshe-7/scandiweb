@@ -8,6 +8,7 @@ import {
   CurrencyDropdown,
   CurrencyDropDownText,
 } from "./components";
+import { OutsideClickDetector } from "../../utils/OutsideClickDetector";
 
 interface CurrencyProps {
   isLoading: boolean;
@@ -16,6 +17,7 @@ interface CurrencyProps {
   isCurrencyOpen: boolean;
   handleCurrencyClick: any;
   handleCurrencyOpen: any;
+  handleCurrencyDropdownClose: any;
 }
 
 export default class Currency extends Component<CurrencyProps> {
@@ -27,26 +29,30 @@ export default class Currency extends Component<CurrencyProps> {
       handleCurrencyClick,
       isCurrencyOpen,
       handleCurrencyOpen,
+      handleCurrencyDropdownClose,
     } = this.props;
+
     return (
       <>
         <CurrencyText>{currentCurrency}</CurrencyText>
-        <CurrencyUpDown
-          isCurrencyOpen={isCurrencyOpen}
-          onClick={handleCurrencyOpen}
-          src={CurrencyUpDownIcon}
-        />
+        <OutsideClickDetector onClickOutside={handleCurrencyDropdownClose}>
+          <CurrencyUpDown
+            isCurrencyOpen={isCurrencyOpen}
+            onClick={handleCurrencyOpen}
+            src={CurrencyUpDownIcon}
+          />
 
-        {isCurrencyOpen && (
-          <CurrencyDropdown>
-            {!isLoading &&
-              currencies.map((currency, idx) => (
-                <CurrencyDropDownText onClick={handleCurrencyClick} key={idx}>
-                  {CURRENCY_AND_SYMBOL[currency]} {currency}
-                </CurrencyDropDownText>
-              ))}
-          </CurrencyDropdown>
-        )}
+          {isCurrencyOpen && (
+            <CurrencyDropdown>
+              {!isLoading &&
+                currencies.map((currency, idx) => (
+                  <CurrencyDropDownText onClick={handleCurrencyClick} key={idx}>
+                    {CURRENCY_AND_SYMBOL[currency]} {currency}
+                  </CurrencyDropDownText>
+                ))}
+            </CurrencyDropdown>
+          )}
+        </OutsideClickDetector>
       </>
     );
   }

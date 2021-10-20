@@ -10,9 +10,10 @@ import { ProductsProps } from "../../utils/types";
 
 export default class Products extends Component<ProductsProps> {
   render() {
-    const { products, isLoading, handleProductRedirect } = this.props;
+    const { products, isLoading, handleProductRedirect, isMiniCartOpen } =
+      this.props;
     return (
-      <ProductsWrapper>
+      <ProductsWrapper isMiniCartOpen={isMiniCartOpen}>
         <ProductsContent>
           <ProductsHeader>Category name</ProductsHeader>
           <IndividualsProductsWrapper>

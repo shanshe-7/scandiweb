@@ -3,7 +3,7 @@ import { Component } from "react";
 import { NavProps } from "../../utils/types";
 import CurrencyContext from "../../utils/context";
 
-import Cart from "./Cart";
+import NavigationCart from "./NavigationCart";
 import Currency from "./Currency";
 import Category from "./Category";
 
@@ -29,6 +29,17 @@ class Navigation extends Component<NavProps> {
       handleCurrencyOpen,
       handleCurrencyClick,
       handelCategoryClick,
+      cartItemCount,
+      handleMiniCartOpenCloseClick,
+      isMiniCartOpen,
+      handleMiniCartClose,
+      handleCurrencyDropdownClose,
+      handleItemCountChange,
+      currency,
+      total,
+      items,
+      handleViewBug,
+      handleCheckoutRedirect,
     } = this.props;
     return (
       <NavigationWrapper>
@@ -47,8 +58,20 @@ class Navigation extends Component<NavProps> {
               handleCurrencyClick={handleCurrencyClick}
               isCurrencyOpen={isCurrencyOpen}
               handleCurrencyOpen={handleCurrencyOpen}
+              handleCurrencyDropdownClose={handleCurrencyDropdownClose}
             />
-            <Cart />
+            <NavigationCart
+              isMiniCartOpen={isMiniCartOpen}
+              handleMiniCartOpenCloseClick={handleMiniCartOpenCloseClick}
+              cartItemCount={cartItemCount}
+              handleMiniCartClose={handleMiniCartClose}
+              handleItemCountChange={handleItemCountChange}
+              currency={currency}
+              total={total}
+              items={items}
+              handleViewBug={handleViewBug}
+              handleCheckoutRedirect={handleCheckoutRedirect}
+            />
           </CurrencyAndCartWrapper>
           <TrapezoidShape>
             <HalfCircle src={HalfCircleIcon}></HalfCircle>

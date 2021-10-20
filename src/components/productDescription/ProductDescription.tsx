@@ -10,12 +10,13 @@ import {
 import ProductImages from "./ProductImages";
 import { ProductDescriptionState } from "../../utils/types";
 import DescriptionDetails from "./DescriptionDetails";
+import { ProductDescriptionProps } from "../../utils/types";
 
 class ProductDescription extends Component<
-  RouteComponentProps,
+  ProductDescriptionProps & RouteComponentProps,
   ProductDescriptionState
 > {
-  constructor(props: RouteComponentProps) {
+  constructor(props: ProductDescriptionProps & RouteComponentProps) {
     super(props);
     this.state = {
       product: {},
@@ -44,9 +45,10 @@ class ProductDescription extends Component<
   }
   render() {
     const { isProductLoading, product } = this.state;
+    const { handleAddProductToCart, isMiniCartOpen } = this.props;
 
     return (
-      <ProductDescriptionWrapper>
+      <ProductDescriptionWrapper isMiniCartOpen={isMiniCartOpen}>
         <ProductDescriptionContent inStock={product.inStock}>
           {!product.inStock && (
             <OutOfStockProductDescriptionPage>
@@ -58,6 +60,7 @@ class ProductDescription extends Component<
             images={product.gallery}
           />
           <DescriptionDetails
+            id={product.id}
             isProductLoading={isProductLoading}
             name={product.name}
             description={product.description}
@@ -65,7 +68,8 @@ class ProductDescription extends Component<
             brand={product.brand}
             attributes={product.attributes}
             inStock={product.inStock}
-            category={product.category}
+            handleAddProductToCart={handleAddProductToCart}
+            gallery={product.gallery?.[0]}
           />
         </ProductDescriptionContent>
       </ProductDescriptionWrapper>

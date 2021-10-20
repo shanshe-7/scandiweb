@@ -18,11 +18,14 @@ import {
   RouteComponentProps,
 } from "react-router-dom";
 import ProductDescription from "./productDescription/ProductDescription";
+import Cart from "./cart/Cart";
+import Checkout from "./checkout/Checkout";
 
 class Main extends Component<MainProps & RouteComponentProps, MainState> {
   constructor(props: MainProps & RouteComponentProps) {
     super(props);
     this.state = {
+      isMiniCartOpen: false,
       isCurrencyOpen: false,
       isLoading: false,
       categories: [],
@@ -30,11 +33,24 @@ class Main extends Component<MainProps & RouteComponentProps, MainState> {
       currencies: [],
       currentCurrency: window.localStorage.getItem("currency") || "$",
       products: [],
+      cartAddedProducts: window.localStorage.getItem("cart")
+        ? JSON.parse(window.localStorage.getItem("cart") as string)
+        : [],
     };
     this.handleCurrencyOpen = this.handleCurrencyOpen.bind(this);
     this.handelCategoryClick = this.handelCategoryClick.bind(this);
     this.handleCurrencyClick = this.handleCurrencyClick.bind(this);
     this.handleProductRedirect = this.handleProductRedirect.bind(this);
+    this.handleAddProductToCart = this.handleAddProductToCart.bind(this);
+    this.handleMiniCartOpenCloseClick =
+      this.handleMiniCartOpenCloseClick.bind(this);
+    this.handleMiniCartClose = this.handleMiniCartClose.bind(this);
+    this.handleCurrencyDropdownClose =
+      this.handleCurrencyDropdownClose.bind(this);
+    this.handleCalculateTotalPrice = this.handleCalculateTotalPrice.bind(this);
+    this.handleItemCountChange = this.handleItemCountChange.bind(this);
+    this.handleViewBug = this.handleViewBug.bind(this);
+    this.handleCheckoutRedirect = this.handleCheckoutRedirect.bind(this);
   }
 
   async handelCategoryClick(e: SyntheticEvent) {
@@ -147,6 +163,133 @@ class Main extends Component<MainProps & RouteComponentProps, MainState> {
     });
   }
 
+  handleAddProductToCart(item: any, id: string) {
+    const findItem = this.state.cartAddedProducts.find(
+      (item: any) => item.id === id
+    );
+    if (findItem) {
+      alert("item already in cart");
+    } else {
+      this.setState((prevState) => ({
+        ...prevState,
+        cartAddedProducts: [...prevState.cartAddedProducts, item],
+      }));
+      window.localStorage.setItem(
+        "cart",
+        JSON.stringify([...this.state.cartAddedProducts, item])
+      );
+      alert("item successfully added");
+    }
+  }
+
+  handleMiniCartOpenCloseClick(e: SyntheticEvent) {
+    e.stopPropagation();
+    this.setState((prevState) => ({
+      ...prevState,
+      isMiniCartOpen: !prevState.isMiniCartOpen,
+    }));
+  }
+
+  handleMiniCartClose() {
+    this.setState((prevState) => ({
+      ...prevState,
+      isMiniCartOpen: false,
+    }));
+  }
+
+  handleCurrencyDropdownClose() {
+    this.setState((prevState) => ({
+      ...prevState,
+      isCurrencyOpen: false,
+    }));
+  }
+
+  handleCalculateTotalPrice() {
+    if (this.state.cartAddedProducts.length) {
+      const prices: any = [];
+      this.state.cartAddedProducts.forEach((product: any) =>
+        prices.push(
+          product.prices.find(
+            (price: any) =>
+              CURRENCY_AND_SYMBOL[price.currency] === this.state.currentCurrency
+          ).amount * product.itemCount
+        )
+      );
+      return prices.reduce((prev: any, cur: any) => prev + cur);
+    }
+  }
+
+  handleItemCountChange(id: string, sign: string, itemCount: number) {
+    if (sign === "minus" && itemCount === 1) {
+      this.setState((prevState) => ({
+        ...prevState,
+        isMiniCartOpen:
+          prevState.cartAddedProducts.length === 1 ||
+          this.props.location.pathname === "/cart"
+            ? false
+            : true,
+        cartAddedProducts: prevState.cartAddedProducts.filter(
+          (product: any) => product.id !== id
+        ),
+      }));
+      window.localStorage.setItem(
+        "cart",
+        JSON.stringify(
+          this.state.cartAddedProducts.filter(
+            (product: any) => product.id !== id
+          )
+        )
+      );
+    } else {
+      this.setState((prevState) => ({
+        ...prevState,
+        cartAddedProducts: prevState.cartAddedProducts.map((product: any) => {
+          if (product.id === id) {
+            return {
+              ...product,
+              itemCount:
+                sign === "plus" ? product.itemCount++ : product.itemCount--,
+            };
+          } else {
+            return product;
+          }
+        }),
+      }));
+      window.localStorage.setItem(
+        "cart",
+        JSON.stringify(
+          this.state.cartAddedProducts.map((product: any) => {
+            if (product.id === id) {
+              return {
+                ...product,
+                itemCount:
+                  sign === "plus" ? product.itemCount++ : product.itemCount--,
+              };
+            } else {
+              return product;
+            }
+          })
+        )
+      );
+    }
+  }
+
+  handleViewBug() {
+    this.props.history.push("/cart");
+    this.setState((prevState) => ({
+      ...prevState,
+      isMiniCartOpen: false,
+    }));
+  }
+
+  handleCheckoutRedirect() {
+    this.props.history.push("/checkout");
+    this.setState((prevState) => ({
+      ...prevState,
+      isMiniCartOpen: false,
+    }));
+  }
+
   render() {
     const {
       isLoading,
@@ -156,6 +299,8 @@ class Main extends Component<MainProps & RouteComponentProps, MainState> {
       currencies,
       currentCurrency,
       products,
+      cartAddedProducts,
+      isMiniCartOpen,
     } = this.state;
 
     return (
@@ -169,6 +314,17 @@ class Main extends Component<MainProps & RouteComponentProps, MainState> {
           handleCurrencyOpen={this.handleCurrencyOpen}
           handleCurrencyClick={this.handleCurrencyClick}
           handelCategoryClick={this.handelCategoryClick}
+          cartItemCount={cartAddedProducts.length}
+          handleMiniCartOpenCloseClick={this.handleMiniCartOpenCloseClick}
+          isMiniCartOpen={isMiniCartOpen}
+          handleMiniCartClose={this.handleMiniCartClose}
+          handleCurrencyDropdownClose={this.handleCurrencyDropdownClose}
+          handleItemCountChange={this.handleItemCountChange}
+          currency={currentCurrency}
+          total={this.handleCalculateTotalPrice()}
+          items={this.state.cartAddedProducts}
+          handleViewBug={this.handleViewBug}
+          handleCheckoutRedirect={this.handleCheckoutRedirect}
         />
 
         <Switch>
@@ -177,10 +333,29 @@ class Main extends Component<MainProps & RouteComponentProps, MainState> {
               handleProductRedirect={this.handleProductRedirect}
               products={products}
               isLoading={isLoading}
+              isMiniCartOpen={isMiniCartOpen}
             />
           </Route>
           <Route path="/description" exact>
-            <ProductDescription />
+            <ProductDescription
+              handleAddProductToCart={this.handleAddProductToCart}
+              isMiniCartOpen={isMiniCartOpen}
+            />
+          </Route>
+          <Route path="/cart" exact>
+            <Cart
+              handleItemCountChange={this.handleItemCountChange}
+              currency={currentCurrency}
+              total={this.handleCalculateTotalPrice()}
+              items={this.state.cartAddedProducts}
+              handleCheckoutRedirect={this.handleCheckoutRedirect}
+            />
+          </Route>
+          <Route path="/checkout" exact>
+            <Checkout />
+          </Route>
+          <Route path="*" exact>
+            <div>Page not found</div>
           </Route>
         </Switch>
       </CurrencyProvider>
